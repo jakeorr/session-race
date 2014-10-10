@@ -1,0 +1,13 @@
+{
+  "name": "session-race",
+  "version": "0.0.1",
+  "description": "A test case for an observed race condition with connection-session-sequelize and current express-session.",
+  "author": "jakeorr",
+  "dependencies": {
+    "express": "^4.4.0",
+    "connect-session-sequelize": "2.0.0",
+    "sequelize": "2.0.0-dev12",
+    "express-session": "1.2.1",
+    "passport": "^0.2.0"
+  }
+}
