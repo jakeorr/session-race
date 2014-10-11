@@ -1,7 +1,7 @@
 {
   "name": "session-race",
   "version": "0.0.1",
-  "description": "A test case for an observed race condition with connection-session-sequelize and current express-session.",
+  "description": "A test case for a possible bug with connection-session-sequelize and current express-session.",
   "author": "jakeorr",
   "dependencies": {
     "express": "^4.4.0",
