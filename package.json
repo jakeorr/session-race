@@ -5,9 +5,11 @@
   "author": "jakeorr",
   "dependencies": {
     "express": "^4.4.0",
-    "connect-session-sequelize": "2.0.0",
     "sequelize": "2.0.0-dev12",
-    "express-session": "1.2.1",
-    "passport": "^0.2.0"
+    "connect-session-sequelize": "2.0.0",
+    "express-session": "1.8.2",
+    "cookie-parser": "^1.1.0",
+    "body-parser": "^1.4.3",
+    "pg": "^3.4.1"
   }
 }
