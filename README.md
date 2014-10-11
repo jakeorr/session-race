@@ -5,7 +5,7 @@ This project tests what appears to be a bug between connect-session-sequelize an
 
 The Issue
 ---
-What I'm doing is setting a session variable in endpoint1 and then redirecting to endpoint2 and checking for that session variable. The session is stored in Postgres using connect-session-sequelize. With newer version of express-session I do not see the session variable in endpoint2. Checking in the DB, I can see the session variable has been set. If I access endpoint2 directly, the session variable is set. It seems that the redirect from endpoint1 to endpoint2 is completing *before* the new session is being saved to the DB.
+What I'm doing is setting a session variable in `endpoint1` and then redirecting to `endpoint2` and checking for that session variable. The session is stored in Postgres using connect-session-sequelize. With newer version of express-session I do not see the session variable in `endpoint2`. Checking in the DB, I can see the session variable has been set. If I access `endpoint2` directly, the session variable is set. It seems that the redirect from `endpoint1` to `endpoint2` is completing *before* the new session is being saved to the DB.
 
 Setup
 ---
