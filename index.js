@@ -66,6 +66,7 @@ var setupExpress = function (next) {
   });
 
   app.post('/', passport.authenticate('local'), function (req, res) {
+    // A solution to the problem
     req.session.save(function (err) {
       if(err) return res.status(500).end();
       res.redirect('/check');
