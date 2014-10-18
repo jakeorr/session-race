@@ -3,7 +3,7 @@ Testcase
 
 **update:** This test has been updated to include passportjs and a basic authentication flow. The issue is similar to the one described below, but instead of a date stamp being saved in the session, it is the passport serialized user that is being saved. The complication here is that the session data is being set inside the passport module.
 
-**solution:** The solution I'm settling on at this point is to use the `req.session.save(cb)` function after authentication and redirect inside the callback. This should be done anywhere that session data could cause race conditions. Whew.
+**solution:** [The solution I'm settling on](https://github.com/jakeorr/session-race/blob/08a2d3b8a9b558e1ade462f5037e7f70983ab92f/index.js#L70) at this point is to use the `req.session.save(cb)` function after authentication and redirect inside the callback. This should be done anywhere that session data could cause race conditions. Whew.
 
 This project tests what appears to be a bug between connect-session-sequelize and the current version of express-session.
 
