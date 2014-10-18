@@ -1,12 +1,14 @@
 /**
  * session-race
- * Minimal test case for a race condition when using connect-session-sequelize
- * and the current version of express-session. See README for useage and details.
+ * Minimal test case for a race condition when using connect-session-sequelize,
+ * the current version of express-session, and passportjs. See README for useage and details.
  *
  */
 var express = require('express'),
   app = express(),
   session = require('express-session'),
+  passport = require('passport'),
+  LocalStrategy = require('passport-local').Strategy,
   SequelizeStore = require('connect-session-sequelize')(session.Store),
   Sequelize = require('sequelize'),
   sequelize,
@@ -23,13 +25,15 @@ var connectToDb = function (next) {
     sequelize = new Sequelize(data.db, data.user, null, {
       dialect: 'postgres',
       host: data.host,
-      logging: false
+      // logging: false
     });
     sequelize.authenticate().nodeify(next);
   });
 };
 
 var setupExpress = function (next) {
+  app.set('view engine', 'ejs');
+
   var sessionStore = new SequelizeStore({
     db: sequelize
   });
@@ -40,37 +44,43 @@ var setupExpress = function (next) {
   app.use(session({
     secret: 'keyboard cat',
     store: sessionStore,
-    resave: true,
+    resave: false,
     saveUninitialized: true
   }));
 
-  //
-  // Start here:
-  //
-  // This endpoint sets a timestamp variable in the user's session
-  // and then redirects to another endpoint
-  //
-  app.get('/', function (req, res) {
-    var time = new Date().getTime();
-    console.log('session variable being saved:', time);
-    req.session.testVar = time;
-    res.redirect('/check');
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.use(new LocalStrategy(
+    function (username, password, done) {
+      return done(null, {name: 'tester', id: 1234});
+    }));
+  passport.serializeUser(function (user, done) {
+    done(null, user.id);
+  });
+  passport.deserializeUser(function (id, done) {
+    done(null, {name: 'tester-deserialize', id: id});
   });
 
-  //
-  // After setting the timestamp, the user is redirected to this endpoint
-  // which checks the session variable that was set in the root endpoint.
-  // 
-  // `req.session.testVar` should equal the timestamp that was set in the
-  // '/' endpoint. When using the current version of express-session it
-  // does not. The first access of '/' it will be set in the DB, but
-  // undefined here. On subsequent requests to '/' this endpoint will report
-  // the previous value of `req.session.testVar` which does not agree with
-  // the value reported in the '/' endpoing and what is in the DB.
-  //
+  app.get('/', function (req, res) {
+    res.render('index');
+  });
+
+  app.post('/', passport.authenticate('local'), function (req, res) {
+    req.session.save(function (err) {
+      if(err) return res.status(500).end();
+      res.redirect('/check');
+    });
+  });
+
   app.get('/check', function (req, res) {
-    console.log('/check req.session', req.session);
-    res.send(JSON.stringify(req.session));
+    res.render('check', {
+      session: req.session
+    });
+  });
+
+  app.get('/signout', function (req, res) {
+    req.logout();
+    res.redirect('/');
   });
 
   next();
